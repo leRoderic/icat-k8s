@@ -1,2 +1,2 @@
 # icat-k8s
-ICAT Kubernetes deployment files use at Alba Synchrotron
+ICAT Kubernetes deployment files used at different facilities

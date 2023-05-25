@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: icat
+  name: icat-plus-deployment
+  labels:
+    app: icat-plus
+    component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icat-plus
+      component: web
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: icat-plus
+        component: web
+    spec:
+      containers:
+        - image: <url_image_registry>
+          imagePullPolicy: Always #IfNotPresent
+          name: icat-plus
+          ports:
+            - containerPort: 80
+          resources: {}
+      imagePullSecrets:
+        - name: <secret_name_for_image_registry_authentication>
+      restartPolicy: Always
+status: {}

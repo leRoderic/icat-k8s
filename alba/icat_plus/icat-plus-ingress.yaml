@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: icat
+  name: icat-plus-ingress
+  labels:
+    app: icat-plus
+    component: ingress-icat-plus
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx2
+  tls:
+  - hosts:
+    - <domain_ingress_will_use>
+    secretName: <name_of_secret_containing_TLS_certificate>
+  rules:
+  - host: <domain_ingress_will_use>
+    http:
+      paths:
+        - path: /icat_plus(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: icat-plus-service
+              port:
+                number: 8000

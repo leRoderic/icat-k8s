@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: icat
+  name: icat-deployment
+  labels:
+    app: icat
+    component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: icat
+      component: web
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: icat
+        component: web
+    spec:
+      securityContext:
+        runAsUser: 0000
+        runAsGroup: 0000
+        fsGroup: 0000
+      containers:
+        - image: <url_image_registry>
+          imagePullPolicy: Always #IfNotPresent
+          name: icat
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - name: bl01 # NCD-SWEET
+              mountPath: /ids/storage/bl01
+              readOnly: true
+      imagePullSecrets:
+        - name: <secret_name_for_image_registry_authentication>
+      restartPolicy: Always
+      volumes:
+        # Volume mount definition for BL storage
+      - name: bl01 # MIRAS
+        nfs:
+          path: /bl01
+          server: <nfs_server_url>
+          readOnly: true
+status: {}

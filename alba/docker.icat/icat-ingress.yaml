@@ -1,0 +1,99 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: icat
+  name: icat-ingress
+  labels:
+    app: icat
+    component: ingress-icat
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx2
+  tls:
+  - hosts:
+    - <domain_ingress_will_use>
+    secretName: <name_of_secret_containing_TLS_certificate>
+  rules:
+  - host: <domain_ingress_will_use>
+    http:
+      paths:
+        - path: /icat_server(/|$)(.*)
+          pathType: Prefix
+          backend:
+            service:
+              name: icat-service
+              port:
+                number: 8080
+        - path: /()(ICATService(.*))
+          pathType: Prefix
+          backend:
+            service:
+              name: icat-service
+              port:
+                number: 8080
+        - path: /()(icat(.*))
+          pathType: Prefix
+          backend:
+            service:
+              name: icat-service
+              port:
+                number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: icat
+  name: icat-ingress-not-secure
+  labels:
+    app: icat
+    component: ingress-icat-not-secure
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx2
+  rules:
+  - host: <domain_ingress_will_use>
+    http:
+      paths:
+        - path: /ICATService/ICAT?xsd=1
+          pathType: Exact
+          backend:
+            service:
+              name: icat-service
+              port:
+                number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: icat-test
+  name: icat-ingress-ids
+  labels:
+    app: icat
+    component: icat-ingress-ids
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /ids/$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx2
+  tls:
+  - hosts:
+    - <domain_ingress_will_use>
+    secretName: <name_of_secret_containing_TLS_certificate>
+  rules:
+  - host: <domain_ingress_will_use>
+    http:
+      paths:
+        - path: /ids(/|$)(.*)
+          pathType: Exact
+          backend:
+            service:
+              name: icat-service
+              port:
+                number: 8080

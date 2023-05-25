@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: icat
+  labels:
+    app: icat
+    component: web
+  name: icat-service
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: icat
+    component: web
+status:
+  loadBalancer: {}
